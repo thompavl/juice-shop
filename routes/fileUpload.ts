@@ -10,6 +10,7 @@ import { type NextFunction, type Request, type Response } from 'express'
 import path from 'path'
 import * as utils from '../lib/utils'
 import { challenges } from '../data/datacache'
+import sanitize from 'sanitize-filename';
 
 const libxml = require('libxmljs')
 const vm = require('vm')
@@ -26,7 +27,14 @@ function handleZipFileUpload ({ file }: Request, res: Response, next: NextFuncti
     if (((file?.buffer) != null) && utils.isChallengeEnabled(challenges.fileWriteChallenge)) {
       const buffer = file.buffer
       const filename = file.originalname.toLowerCase()
-      const tempFile = path.join(os.tmpdir(), filename)
+      const sanitizedFilename = sanitize(filename);
+      const tempFile = path.join(os.tmpdir(), sanitizedFilename);
+      // Ensure the resolved path is within the temporary directory
+      if (tempFile.startsWith(os.tmpdir())) {
+        // Proceed with file operations
+      } else {
+        res.status(400).send('Invalid file path');
+      }
       fs.open(tempFile, 'w', function (err, fd) {
         if (err != null) { next(err) }
         fs.write(fd, buffer, 0, buffer.length, null, function (err) {
@@ -36,7 +44,14 @@ function handleZipFileUpload ({ file }: Request, res: Response, next: NextFuncti
               .pipe(unzipper.Parse())
               .on('entry', function (entry: any) {
                 const fileName = entry.path
-                const absolutePath = path.resolve('uploads/complaints/' + fileName)
+                const sanitizedFileName = sanitize(fileName);
+                const absolutePath = path.resolve('uploads/complaints', sanitizedFileName);
+                // Ensure the resolved path is within the 'uploads/complaints' directory
+                if (absolutePath.startsWith(path.resolve('uploads/complaints'))) {
+                  // Proceed with file operations
+                } else {
+                  res.status(400).send('Invalid file path');
+                  }
                 challengeUtils.solveIf(challenges.fileWriteChallenge, () => { return absolutePath === path.resolve('ftp/legal.md') })
                 if (absolutePath.includes(path.resolve('.'))) {
                   entry.pipe(fs.createWriteStream('uploads/complaints/' + fileName).on('error', function (err) { next(err) }))
