@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { type Request, type Response, type NextFunction } from 'express'
+import { type Request, type Response} from 'express'
 import { WalletModel } from '../models/wallet'
 import { CardModel } from '../models/card'
 
 module.exports.getWalletBalance = function getWalletBalance () {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     const wallet = await WalletModel.findOne({ where: { UserId: req.body.UserId } })
     if (wallet != null) {
       res.status(200).json({ status: 'success', data: wallet.balance })
@@ -19,7 +19,7 @@ module.exports.getWalletBalance = function getWalletBalance () {
 }
 
 module.exports.addWalletBalance = function addWalletBalance () {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     const cardId = req.body.paymentId
     const card = cardId ? await CardModel.findOne({ where: { id: cardId, UserId: req.body.UserId } }) : null
     if (card != null) {
