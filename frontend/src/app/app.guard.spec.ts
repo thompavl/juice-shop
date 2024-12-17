@@ -8,7 +8,8 @@ import { AccountingGuard, AdminGuard, DeluxeGuard, LoginGuard } from './app.guar
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { RouterTestingModule } from '@angular/router/testing'
 import { ErrorPageComponent } from './error-page/error-page.component'
-require("dotenv").config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 describe('LoginGuard', () => {
   beforeEach(() => {

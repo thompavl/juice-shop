@@ -7,7 +7,8 @@ import { type ComponentFixture, TestBed, waitForAsync } from '@angular/core/test
 import { LastLoginIpComponent } from './last-login-ip.component'
 import { MatCardModule } from '@angular/material/card'
 import { DomSanitizer } from '@angular/platform-browser'
-require("dotenv").config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 describe('LastLoginIpComponent', () => {
   let component: LastLoginIpComponent
