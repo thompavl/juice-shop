@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
 import logger from './logger'
+import sanitize from 'sanitize-filename';
 
 export const SNIPPET_PATHS = Object.freeze(['./server.ts', './routes', './lib', './data', './data/static/web3-snippets', './frontend/src/app', './models'])
 
@@ -21,7 +22,8 @@ export const findFilesWithCodeChallenges = async (paths: readonly string[]): Pro
     if ((await fs.lstat(currPath)).isDirectory()) {
       const files = await fs.readdir(currPath)
       const moreMatches = await findFilesWithCodeChallenges(
-        files.map(file => path.resolve(currPath, file))
+        files.map(file =>
+          path.resolve(currPath, sanitize(file)))
       )
       matches.push(...moreMatches)
     } else {
@@ -72,13 +74,16 @@ function getCodingChallengeFromFileContent (source: string, challengeKey: string
   if (lines.length === 1) lines = snippet.split('\r')
   const vulnLines = []
   const neutralLines = []
-  for (let i = 0; i < lines.length; i++) {
-    if (new RegExp(`vuln-code-snippet vuln-line.*${challengeKey}`).exec(lines[i]) != null) {
-      vulnLines.push(i + 1)
-    } else if (new RegExp(`vuln-code-snippet neutral-line.*${challengeKey}`).exec(lines[i]) != null) {
-      neutralLines.push(i + 1)
-    }
+const vulnRegex = new RegExp(`vuln-code-snippet vuln-line.*${challengeKey}`)
+const neutralRegex = new RegExp(`vuln-code-snippet neutral-line.*${challengeKey}`)
+
+for (let i = 0; i < lines.length; i++) {
+  if (vulnRegex.exec(lines[i]) != null) {
+    vulnLines.push(i + 1)
+  } else if (neutralRegex.exec(lines[i]) != null) {
+    neutralLines.push(i + 1)
   }
+}
   snippet = snippet.replace(/\s?[/#]{0,2} vuln-code-snippet vuln-line.*/g, '')
   snippet = snippet.replace(/\s?[/#]{0,2} vuln-code-snippet neutral-line.*/g, '')
   return { challengeKey, snippet, vulnLines, neutralLines }
