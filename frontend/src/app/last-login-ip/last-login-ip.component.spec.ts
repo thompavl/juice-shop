@@ -7,6 +7,7 @@ import { type ComponentFixture, TestBed, waitForAsync } from '@angular/core/test
 import { LastLoginIpComponent } from './last-login-ip.component'
 import { MatCardModule } from '@angular/material/card'
 import { DomSanitizer } from '@angular/platform-browser'
+require("dotenv").config();
 
 describe('LastLoginIpComponent', () => {
   let component: LastLoginIpComponent
@@ -47,7 +48,7 @@ describe('LastLoginIpComponent', () => {
   })
 
   xit('should set Last-Login IP from JWT as trusted HTML', () => { // FIXME Expected state seems to leak over from previous test case occasionally
-    localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Imxhc3RMb2dpbklwIjoiMS4yLjMuNCJ9fQ.RAkmdqwNypuOxv3SDjPO4xMKvd1CddKvDFYDBfUt3bg')
+    localStorage.setItem('token', process.env.JWT_TEST_TOKEN2)
     component.ngOnInit()
     expect(sanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith('<small>1.2.3.4</small>')
   })

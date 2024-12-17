@@ -15,7 +15,7 @@ import config from 'config'
 import jws from 'jws'
 
 import * as utils from '../lib/utils'
-const security = require('../lib/insecurity')
+import security = require('../lib/insecurity')
 const jwt = require('jsonwebtoken')
 const cache = require('../data/datacache')
 const challenges = cache.challenges
