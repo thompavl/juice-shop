@@ -19,6 +19,8 @@ import validateChatBot from '../lib/startup/validateChatBot'
 import * as security from '../lib/insecurity'
 import * as botUtils from '../lib/botUtils'
 import { challenges } from '../data/datacache'
+import sanitizeHtml from 'sanitize-html';
+
 
 let trainingFile = config.get<string>('application.chatBot.trainingData')
 let testCommand: string
@@ -158,9 +160,10 @@ async function setUserName (user: User, req: Request, res: Response) {
 export const status = function status () {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (bot == null) {
+      const chatBotName = sanitizeHtml(config.get<string>('application.chatBot.name'));
       res.status(200).json({
         status: false,
-        body: `${config.get<string>('application.chatBot.name')} isn't ready at the moment, please wait while I set things up`
+        body: `${chatBotName} isn't ready at the moment, please wait while I set things up`
       })
       return
     }

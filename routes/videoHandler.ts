@@ -10,6 +10,7 @@ import config from 'config'
 import * as utils from '../lib/utils'
 import { AllHtmlEntities as Entities } from 'html-entities'
 import { challenges } from '../data/datacache'
+import sanitizeHtml from 'sanitize-html';
 
 const pug = require('pug')
 const themes = require('../views/themes/themes').themes
@@ -53,8 +54,10 @@ exports.promotionVideo = () => {
       if (err != null) throw err
       let template = buf.toString()
       const subs = getSubsFromFile()
-
-      challengeUtils.solveIf(challenges.videoXssChallenge, () => { return utils.contains(subs, '</script><script>alert(`xss`)</script>') })
+      const sanitizedSubs = sanitizeHtml(subs);
+      challengeUtils.solveIf(challenges.videoXssChallenge, () => { 
+        return utils.contains(sanitizedSubs, '</script><script>alert(`xss`)</script>') 
+      })
 
       const theme = themes[config.get<string>('application.theme')]
       template = template.replace(/_title_/g, entities.encode(config.get<string>('application.name')))
@@ -66,8 +69,7 @@ exports.promotionVideo = () => {
       template = template.replace(/_primDark_/g, theme.primDark)
       const fn = pug.compile(template)
       let compiledTemplate = fn()
-      compiledTemplate = compiledTemplate.replace('<script id="subtitle"></script>', '<script id="subtitle" type="text/vtt" data-label="English" data-lang="en">' + subs + '</script>')
-      res.send(compiledTemplate)
+      compiledTemplate = compiledTemplate.replace('<script id="subtitle"></script>', '<script id="subtitle" type="text/vtt" data-label="English" data-lang="en">' + sanitizedSubs + '</script>');      res.send(compiledTemplate)
     })
   }
   function favicon () {
