@@ -15,6 +15,17 @@ const REST_URL = 'http://localhost:3000/rest'
 const authHeader = { Authorization: 'Bearer ' + security.authorize(), 'content-type': /application\/json/ }
 const jsonHeader = { 'content-type': 'application/json' }
 
+function loginUser(email: string, password: string) {
+  return frisby.post(REST_URL + '/user/login', {
+    headers: jsonHeader,
+    body: {
+      email: email,
+      password: password
+    }
+  })
+  .expect('status', 200);
+}
+
 describe('/api/Feedbacks', () => {
   it('GET all feedback', () => {
     return frisby.get(API_URL + '/Feedbacks')
@@ -112,15 +123,8 @@ describe('/api/Feedbacks', () => {
   })
 
   it('POST feedback is associated with current user', () => {
-    return frisby.post(REST_URL + '/user/login', {
-      headers: jsonHeader,
-      body: {
-        email: 'bjoern.kimminich@gmail.com',
-        password: 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI='
-      }
-    })
-      .expect('status', 200)
-      .then(({ json: jsonLogin }) => {
+    return loginUser('bjoern.kimminich@gmail.com', 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI=')
+    .then(({ json: jsonLogin }) => {
         return frisby.get(REST_URL + '/captcha')
           .expect('status', 200)
           .expect('header', 'content-type', /application\/json/)
@@ -145,14 +149,7 @@ describe('/api/Feedbacks', () => {
   })
 
   it('POST feedback is associated with any passed user ID', () => {
-    return frisby.post(REST_URL + '/user/login', {
-      headers: jsonHeader,
-      body: {
-        email: 'bjoern.kimminich@gmail.com',
-        password: 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI='
-      }
-    })
-      .expect('status', 200)
+    return loginUser('bjoern.kimminich@gmail.com', 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI=')
       .then(({ json: jsonLogin }) => {
         return frisby.get(REST_URL + '/captcha')
           .expect('status', 200)
