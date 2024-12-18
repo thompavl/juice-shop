@@ -43,8 +43,8 @@ const startTime = Date.now()
 const finale = require('finale-rest')
 import express = require('express')
 import compression = require('compression')
-import helmet = require('helmet')
-import featurePolicy = require('feature-policy')
+import helmet from 'helmet'
+import featurePolicy from 'feature-policy'
 const errorhandler = require('errorhandler')
 import cookieParser = require('cookie-parser')
 import serveIndex = require('serve-index')

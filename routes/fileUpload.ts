@@ -14,7 +14,7 @@ import sanitize from 'sanitize-filename';
 
 const libxml = require('libxmljs')
 const vm = require('vm')
-const unzipper = require('unzipper')
+import * as unzipper from 'unzipper';
 
 function ensureFileIsPassed ({ file }: Request, res: Response, next: NextFunction) {
   if (file != null) {
