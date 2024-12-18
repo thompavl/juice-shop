@@ -12,6 +12,16 @@ const fs = require('fs')
 const jsonHeader = { 'content-type': 'application/json' }
 const REST_URL = 'http://localhost:3000/rest'
 
+function loginJim() {
+  return frisby.post(REST_URL + '/user/login', {
+    headers: jsonHeader,
+    body: {
+      email: 'jim@' + config.get<string>('application.domain'),
+      password: 'ncc-1701'
+    }
+  }).expect('status', 200)
+}
+
 describe('/rest/memories', () => {
   it('GET memories via public API', () => {
     return frisby.get(REST_URL + '/memories')
@@ -56,15 +66,7 @@ describe('/rest/memories', () => {
     const form = frisby.formData()
     form.append('image', fs.createReadStream(file), 'Valid Image')
     form.append('caption', 'Valid Image')
-
-    return frisby.post(REST_URL + '/user/login', {
-      headers: jsonHeader,
-      body: {
-        email: 'jim@' + config.get<string>('application.domain'),
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return loginJim()
       .then(({ json: jsonLogin }) => {
         return frisby.post(REST_URL + '/memories', {
           headers: {
@@ -83,15 +85,7 @@ describe('/rest/memories', () => {
     const form = frisby.formData()
     form.append('image', fs.createReadStream(file), 'Valid Image')
     form.append('caption', 'Valid Image')
-
-    return frisby.post(REST_URL + '/user/login', {
-      headers: jsonHeader,
-      body: {
-        email: 'jim@' + config.get<string>('application.domain'),
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return loginJim()
       .then(({ json: jsonLogin }) => {
         return frisby.post(REST_URL + '/memories', {
           headers: {

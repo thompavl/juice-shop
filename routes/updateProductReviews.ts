@@ -8,11 +8,11 @@ import { type Request, type Response, type NextFunction } from 'express'
 import * as db from '../data/mongodb'
 import { challenges } from '../data/datacache'
 
-const security = require('../lib/insecurity')
+import security = require('../lib/insecurity')
 
 // vuln-code-snippet start noSqlReviewsChallenge forgedReviewChallenge
 module.exports = function productReviews () {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response) => {
     const user = security.authenticatedUsers.from(req) // vuln-code-snippet vuln-line forgedReviewChallenge
     db.reviewsCollection.update( // vuln-code-snippet neutral-line forgedReviewChallenge
       { _id: req.body.id }, // vuln-code-snippet vuln-line noSqlReviewsChallenge forgedReviewChallenge

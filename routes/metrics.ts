@@ -64,7 +64,7 @@ exports.observeFileUploadMetricsMiddleware = function observeFileUploadMetricsMi
 }
 
 exports.serveMetrics = function serveMetrics () {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     challengeUtils.solveIf(challenges.exposedMetricsChallenge, () => {
       const userAgent = req.headers['user-agent'] ?? ''
       return !userAgent.includes('Prometheus')

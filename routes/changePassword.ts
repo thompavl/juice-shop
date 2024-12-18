@@ -8,7 +8,7 @@ import { UserModel } from '../models/user'
 import challengeUtils = require('../lib/challengeUtils')
 
 const security = require('../lib/insecurity')
-const cache = require('../data/datacache')
+import cache = require('../data/datacache')
 const challenges = cache.challenges
 
 module.exports = function changePassword () {

@@ -12,7 +12,7 @@ import { challenges } from '../data/datacache'
 const security = require('../lib/insecurity')
 
 module.exports = function productReviews () {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response) => {
     const id = req.body.id
     const user = security.authenticatedUsers.from(req)
     db.reviewsCollection.findOne({ _id: id }).then((review: Review) => {

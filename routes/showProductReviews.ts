@@ -10,7 +10,7 @@ import { type Review } from 'data/types'
 import * as db from '../data/mongodb'
 import { challenges } from '../data/datacache'
 
-const security = require('../lib/insecurity')
+import security = require('../lib/insecurity')
 
 // Blocking sleep function as in native MongoDB
 // @ts-expect-error FIXME Type safety broken for global object
@@ -26,7 +26,7 @@ global.sleep = (time: number) => {
 }
 
 module.exports = function productReviews () {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response) => {
     const id = !utils.isChallengeEnabled(challenges.noSqlCommandChallenge) ? Number(req.params.id) : req.params.id
 
     // Measure how long the query takes, to check if there was a nosql dos attack

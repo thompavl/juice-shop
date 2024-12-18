@@ -12,8 +12,8 @@ import * as utils from '../lib/utils'
 import { challenges } from '../data/datacache'
 import sanitize from 'sanitize-filename';
 
-const libxml = require('libxmljs')
-const vm = require('vm')
+import libxml = require('libxmljs')
+import vm = require('vm')
 import * as unzipper from 'unzipper';
 
 function ensureFileIsPassed ({ file }: Request, res: Response, next: NextFunction) {
