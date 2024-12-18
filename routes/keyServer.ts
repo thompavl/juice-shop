@@ -9,21 +9,23 @@ import sanitize from 'sanitize-filename';
 
 module.exports = function serveKeyFiles () {
   return ({ params }: Request, res: Response, next: NextFunction) => {
-    const file = params.file
+    const file = params.file;
 
     if (!file.includes('/')) {
       const sanitizedFile = sanitize(file);
-      const resolvedPath = path.resolve('encryptionkeys/', sanitizedFile);
+      const safeBasePath = path.resolve('encryptionkeys/');
+      const resolvedPath = path.resolve(safeBasePath, sanitizedFile);
 
       // Ensure the resolved path is within the 'encryptionkeys' directory
-      if (resolvedPath.startsWith(path.resolve('encryptionkeys/'))) {
+      if (resolvedPath.startsWith(safeBasePath)) {
         res.sendFile(resolvedPath);
       } else {
         res.status(400).send('Invalid file path');
       }
     } else {
-      res.status(403)
-      next(new Error('File names cannot contain forward slashes!'))
+      res.status(403);
+      next(new Error('File names cannot contain forward slashes!'));
     }
   }
 }
+
