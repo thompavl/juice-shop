@@ -9,7 +9,7 @@ import { UserModel } from '../models/user'
 import { challenges } from '../data/datacache'
 
 import * as utils from '../lib/utils'
-const challengeUtils = require('../lib/challengeUtils')
+import challengeUtils = require('../lib/challengeUtils')
 
 class ErrorWithParent extends Error {
   parent: Error | undefined
