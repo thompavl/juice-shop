@@ -13,20 +13,38 @@ const REST_URL = 'http://localhost:3000/rest'
 const jsonHeader = { 'content-type': 'application/json' }
 let authHeader: { Authorization: string, 'content-type': string }
 
+const loginAsRegularCustomer = () => {
+  return frisby.post(REST_URL + '/user/login', {
+    headers: jsonHeader,
+    body: {
+      email: 'jim@' + config.get<string>('application.domain'),
+      password: 'ncc-1701'
+    }
+  })
+    .expect('status', 200)
+    .then(({ json }) => {
+      authHeader = { Authorization: 'Bearer ' + json.authentication.token, 'content-type': 'application/json' }
+    });
+};
+
+const loginAsCISO = () => {
+  return frisby.post(REST_URL + '/user/login', {
+    headers: jsonHeader,
+    body: {
+      email: 'ciso@' + config.get<string>('application.domain'),
+      password: 'mDLx?94T~1CfVfZMzw@sJ9f?s3L6lbMqE70FfI8^54jbNikY5fymx7c!YbJb'
+    }
+  })
+    .expect('status', 200)
+    .then(({ json }) => {
+      authHeader = { Authorization: 'Bearer ' + json.authentication.token, 'content-type': 'application/json' }
+    });
+};
+
 describe('/api/Deliverys', () => {
   describe('for regular customer', () => {
     beforeAll(() => {
-      return frisby.post(REST_URL + '/user/login', {
-        headers: jsonHeader,
-        body: {
-          email: 'jim@' + config.get<string>('application.domain'),
-          password: 'ncc-1701'
-        }
-      })
-        .expect('status', 200)
-        .then(({ json }) => {
-          authHeader = { Authorization: 'Bearer ' + json.authentication.token, 'content-type': 'application/json' }
-        })
+      return loginAsRegularCustomer();
     })
 
     it('GET delivery methods', () => {
@@ -45,17 +63,7 @@ describe('/api/Deliverys', () => {
 
   describe('for deluxe customer', () => {
     beforeAll(() => {
-      return frisby.post(REST_URL + '/user/login', {
-        headers: jsonHeader,
-        body: {
-          email: 'ciso@' + config.get<string>('application.domain'),
-          password: 'mDLx?94T~1CfVfZMzw@sJ9f?s3L6lbMqE70FfI8^54jbNikY5fymx7c!YbJb'
-        }
-      })
-        .expect('status', 200)
-        .then(({ json }) => {
-          authHeader = { Authorization: 'Bearer ' + json.authentication.token, 'content-type': 'application/json' }
-        })
+      return loginAsCISO();
     })
 
     it('GET delivery methods', () => {
@@ -76,17 +84,7 @@ describe('/api/Deliverys', () => {
 describe('/api/Deliverys/:id', () => {
   describe('for regular customer', () => {
     beforeAll(() => {
-      return frisby.post(REST_URL + '/user/login', {
-        headers: jsonHeader,
-        body: {
-          email: 'jim@' + config.get<string>('application.domain'),
-          password: 'ncc-1701'
-        }
-      })
-        .expect('status', 200)
-        .then(({ json }) => {
-          authHeader = { Authorization: 'Bearer ' + json.authentication.token, 'content-type': 'application/json' }
-        })
+      return loginAsRegularCustomer();
     })
 
     it('GET delivery method', () => {
@@ -104,17 +102,7 @@ describe('/api/Deliverys/:id', () => {
 
   describe('for deluxe customer', () => {
     beforeAll(() => {
-      return frisby.post(REST_URL + '/user/login', {
-        headers: jsonHeader,
-        body: {
-          email: 'ciso@' + config.get<string>('application.domain'),
-          password: 'mDLx?94T~1CfVfZMzw@sJ9f?s3L6lbMqE70FfI8^54jbNikY5fymx7c!YbJb'
-        }
-      })
-        .expect('status', 200)
-        .then(({ json }) => {
-          authHeader = { Authorization: 'Bearer ' + json.authentication.token, 'content-type': 'application/json' }
-        })
+      return loginAsCISO();
     })
 
     it('GET delivery method', () => {

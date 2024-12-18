@@ -9,31 +9,50 @@ import validateConfig from '../../lib/startup/validateConfig'
 
 const expect = chai.expect
 chai.use(sinonChai)
+// Helper function to generate products array
+const getProducts = () => [
+  {
+    name: 'Apple Juice',
+    useForChristmasSpecialChallenge: true
+  },
+  {
+    name: 'Orange Juice',
+    urlForProductTamperingChallenge: 'foobar'
+  },
+  {
+    name: 'Melon Juice',
+    fileForRetrieveBlueprintChallenge: 'foobar',
+    exifForBlueprintChallenge: ['OpenSCAD']
+  },
+  {
+    name: 'Rippertuer Special Juice',
+    keywordsForPastebinDataLeakChallenge: ['bla', 'blubb']
+  }
+]
+
+// Helper function to generate memories array
+function getMemories() {
+  return [
+    {
+      image: 'bla.png',
+      geoStalkingMetaSecurityQuestion: 42,
+      geoStalkingMetaSecurityAnswer: 'foobar'
+    },
+    {
+      image: 'blubb.png',
+      geoStalkingVisualSecurityQuestion: 43,
+      geoStalkingVisualSecurityAnswer: 'barfoo'
+    }
+  ];
+}
 
 const { checkUnambiguousMandatorySpecialProducts, checkUniqueSpecialOnProducts, checkYamlSchema, checkMinimumRequiredNumberOfProducts, checkUnambiguousMandatorySpecialMemories, checkMinimumRequiredNumberOfMemories, checkUniqueSpecialOnMemories, checkSpecialMemoriesHaveNoUserAssociated, checkNecessaryExtraKeysOnSpecialProducts } = require('../../lib/startup/validateConfig')
 
 describe('configValidation', () => {
   describe('checkUnambiguousMandatorySpecialProducts', () => {
     it('should accept a valid config', () => {
-      const products = [
-        {
-          name: 'Apple Juice',
-          useForChristmasSpecialChallenge: true
-        },
-        {
-          name: 'Orange Juice',
-          urlForProductTamperingChallenge: 'foobar'
-        },
-        {
-          name: 'Melon Juice',
-          fileForRetrieveBlueprintChallenge: 'foobar',
-          exifForBlueprintChallenge: ['OpenSCAD']
-        },
-        {
-          name: 'Rippertuer Special Juice',
-          keywordsForPastebinDataLeakChallenge: ['bla', 'blubb']
-        }
-      ]
+    const products = getProducts()
+
 
       expect(checkUnambiguousMandatorySpecialProducts(products)).to.equal(true)
     })
@@ -80,26 +99,7 @@ describe('configValidation', () => {
 
   describe('checkNecessaryExtraKeysOnSpecialProducts', () => {
     it('should accept a valid config', () => {
-      const products = [
-        {
-          name: 'Apple Juice',
-          useForChristmasSpecialChallenge: true
-        },
-        {
-          name: 'Orange Juice',
-          urlForProductTamperingChallenge: 'foobar'
-        },
-        {
-          name: 'Melon Juice',
-          fileForRetrieveBlueprintChallenge: 'foobar',
-          exifForBlueprintChallenge: ['OpenSCAD']
-        },
-        {
-          name: 'Rippertuer Special Juice',
-          keywordsForPastebinDataLeakChallenge: ['bla', 'blubb']
-        }
-      ]
-
+      const products = getProducts()
       expect(checkNecessaryExtraKeysOnSpecialProducts(products)).to.equal(true)
     })
 
@@ -129,26 +129,7 @@ describe('configValidation', () => {
 
   describe('checkUniqueSpecialOnProducts', () => {
     it('should accept a valid config', () => {
-      const products = [
-        {
-          name: 'Apple Juice',
-          useForChristmasSpecialChallenge: true
-        },
-        {
-          name: 'Orange Juice',
-          urlForProductTamperingChallenge: 'foobar'
-        },
-        {
-          name: 'Melon Juice',
-          fileForRetrieveBlueprintChallenge: 'foobar',
-          exifForBlueprintChallenge: ['OpenSCAD']
-        },
-        {
-          name: 'Rippertuer Special Juice',
-          keywordsForPastebinDataLeakChallenge: ['bla', 'blubb']
-        }
-      ]
-
+      const products = getProducts()
       expect(checkUniqueSpecialOnProducts(products)).to.equal(true)
     })
 
@@ -255,38 +236,14 @@ describe('configValidation', () => {
     })
 
     it('should fail if memories have mixed up the required challenge keys', () => {
-      const memories = [
-        {
-          image: 'bla.png',
-          geoStalkingMetaSecurityQuestion: 42,
-          geoStalkingVisualSecurityAnswer: 'foobar'
-        },
-        {
-          image: 'blubb.png',
-          geoStalkingVisualSecurityQuestion: 43,
-          geoStalkingMetaSecurityAnswer: 'barfoo'
-        }
-      ]
-
+      const memories = getMemories();
       expect(checkUnambiguousMandatorySpecialMemories(memories)).to.equal(false)
     })
   })
 
   describe('checkThatThereIsOnlyOneMemoryPerSpecial', () => {
     it('should accept a valid config', () => {
-      const memories = [
-        {
-          image: 'bla.png',
-          geoStalkingMetaSecurityQuestion: 42,
-          geoStalkingMetaSecurityAnswer: 'foobar'
-        },
-        {
-          image: 'blubb.png',
-          geoStalkingVisualSecurityQuestion: 43,
-          geoStalkingVisualSecurityAnswer: 'barfoo'
-        }
-      ]
-
+      const memories = getMemories();
       expect(checkUniqueSpecialOnMemories(memories)).to.equal(true)
     })
 
@@ -308,19 +265,7 @@ describe('configValidation', () => {
 
   describe('checkSpecialMemoriesHaveNoUserAssociated', () => {
     it('should accept a valid config', () => {
-      const memories = [
-        {
-          image: 'bla.png',
-          geoStalkingMetaSecurityQuestion: 42,
-          geoStalkingMetaSecurityAnswer: 'foobar'
-        },
-        {
-          image: 'blubb.png',
-          geoStalkingVisualSecurityQuestion: 43,
-          geoStalkingVisualSecurityAnswer: 'barfoo'
-        }
-      ]
-
+      const memories = getMemories();
       expect(checkSpecialMemoriesHaveNoUserAssociated(memories)).to.equal(true)
     })
 

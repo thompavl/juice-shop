@@ -10,6 +10,7 @@ import challengeUtils = require('../lib/challengeUtils')
 
 import * as utils from '../lib/utils'
 const security = require('../lib/insecurity')
+import sanitize from 'sanitize-filename';
 
 module.exports = function servePublicFiles () {
   return ({ params, query }: Request, res: Response, next: NextFunction) => {
@@ -29,8 +30,14 @@ module.exports = function servePublicFiles () {
 
       challengeUtils.solveIf(challenges.directoryListingChallenge, () => { return file.toLowerCase() === 'acquisitions.md' })
       verifySuccessfulPoisonNullByteExploit(file)
-
-      res.sendFile(path.resolve('ftp/', file))
+      const sanitizedFile = sanitize(file);
+      const resolvedPath = path.resolve('ftp/', sanitizedFile);
+      // Ensure the resolved path is within the 'ftp' directory
+      if (resolvedPath.startsWith(path.resolve('ftp/'))) {
+        res.sendFile(resolvedPath);
+      } else {
+        res.status(400).send('Invalid file path');
+      }
     } else {
       res.status(403)
       next(new Error('Only .md and .pdf files are allowed!'))

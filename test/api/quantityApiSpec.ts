@@ -12,16 +12,19 @@ const API_URL = 'http://localhost:3000/api'
 
 const jsonHeader = { 'content-type': 'application/json' }
 
+const login = (email: string, password: string) => {
+  return frisby.post(`${REST_URL}/user/login`, {
+    headers: jsonHeader,
+    body: {
+      email: `${email}@${config.get<string>('application.domain')}`,
+      password: password
+    }
+  }).expect('status', 200);
+};
+
 describe('/api/Quantitys', () => {
   it('GET quantity of all items for customers', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return login('jim', 'ncc-1701')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -31,14 +34,7 @@ describe('/api/Quantitys', () => {
   })
 
   it('GET quantity of all items for admin', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `admin@${config.get<string>('application.domain')}`,
-        password: 'admin123'
-      }
-    })
-      .expect('status', 200)
+    return login('admin', 'admin123')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -48,14 +44,7 @@ describe('/api/Quantitys', () => {
   })
 
   it('GET quantity of all items for accounting users', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -65,14 +54,7 @@ describe('/api/Quantitys', () => {
   })
 
   it('POST quantity is forbidden for customers', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return login('jim', 'ncc-1701')
       .then(({ json }) => {
         return frisby.post(`${API_URL}/Quantitys`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' },
@@ -86,13 +68,7 @@ describe('/api/Quantitys', () => {
   })
 
   it('POST quantity forbidden for admin', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `admin@${config.get<string>('application.domain')}`,
-        password: 'admin123'
-      }
-    })
+    return login('admin', 'admin123')
       .expect('status', 200)
       .then(({ json }) => {
         return frisby.post(`${API_URL}/Quantitys`, {
@@ -107,14 +83,7 @@ describe('/api/Quantitys', () => {
   })
 
   it('POST quantity is forbidden for accounting users', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.post(`${API_URL}/Quantitys`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' },
@@ -130,14 +99,7 @@ describe('/api/Quantitys', () => {
 
 describe('/api/Quantitys/:ids', () => {
   it('GET quantity of all items is forbidden for customers', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return login('jim', 'ncc-1701')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -148,14 +110,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('GET quantity of all items is forbidden for admin', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `admin@${config.get<string>('application.domain')}`,
-        password: 'admin123'
-      }
-    })
-      .expect('status', 200)
+    return login('admin', 'admin123')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -166,14 +121,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('GET quantity of all items for accounting users blocked by IP filter', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -183,14 +131,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   xit('GET quantity of all items for accounting users from IP 123.456.789', () => { // TODO Check if possible to set IP in frisby tests
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.get(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -200,14 +141,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('PUT quantity is forbidden for customers', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return login('jim', 'ncc-1701')
       .then(({ json }) => {
         return frisby.put(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' },
@@ -221,14 +155,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('PUT quantity is forbidden for admin', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return login('jim', 'ncc-1701')
       .then(({ json }) => {
         return frisby.put(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' },
@@ -242,14 +169,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('PUT quantity as accounting user blocked by IP filter', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.put(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' },
@@ -262,14 +182,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   xit('PUT quantity as accounting user from IP 123.456.789', () => { // TODO Check if possible to set IP in frisby tests
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.put(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' },
@@ -285,14 +198,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('DELETE quantity is forbidden for accountant', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `accountant@${config.get<string>('application.domain')}`,
-        password: 'i am an awesome accountant'
-      }
-    })
-      .expect('status', 200)
+    return login('accountant', 'i am an awesome accountant')
       .then(({ json }) => {
         return frisby.del(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -302,14 +208,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('DELETE quantity is forbidden for admin', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `admin@${config.get<string>('application.domain')}`,
-        password: 'admin123'
-      }
-    })
-      .expect('status', 200)
+    return login('admin', 'admin123')
       .then(({ json }) => {
         return frisby.del(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }
@@ -319,14 +218,7 @@ describe('/api/Quantitys/:ids', () => {
   })
 
   it('DELETE quantity is forbidden for users', () => {
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return login('jim', 'ncc-1701')
       .then(({ json }) => {
         return frisby.del(`${API_URL}/Quantitys/1`, {
           headers: { Authorization: `Bearer ${json.authentication.token}`, 'content-type': 'application/json' }

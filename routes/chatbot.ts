@@ -19,6 +19,8 @@ import validateChatBot from '../lib/startup/validateChatBot'
 import * as security from '../lib/insecurity'
 import * as botUtils from '../lib/botUtils'
 import { challenges } from '../data/datacache'
+import sanitizeHtml from 'sanitize-html';
+
 
 let trainingFile = config.get<string>('application.chatBot.trainingData')
 let testCommand: string
@@ -156,11 +158,12 @@ async function setUserName (user: User, req: Request, res: Response) {
 }
 
 export const status = function status () {
+  const chatBotName = sanitizeHtml(config.get<string>('application.chatBot.name'));
   return async (req: Request, res: Response, next: NextFunction) => {
     if (bot == null) {
       res.status(200).json({
         status: false,
-        body: `${config.get<string>('application.chatBot.name')} isn't ready at the moment, please wait while I set things up`
+        body: `${chatBotName} isn't ready at the moment, please wait while I set things up`
       })
       return
     }
@@ -168,7 +171,7 @@ export const status = function status () {
     if (!token) {
       res.status(200).json({
         status: bot.training.state,
-        body: `Hi, I can't recognize you. Sign in to talk to ${config.get<string>('application.chatBot.name')}`
+        body: `Hi, I can't recognize you. Sign in to talk to ${chatBotName}`
       })
       return
     }
@@ -195,7 +198,7 @@ export const status = function status () {
       bot.addUser(`${user.id}`, username)
       res.status(200).json({
         status: bot.training.state,
-        body: bot.training.state ? bot.greet(`${user.id}`) : `${config.get<string>('application.chatBot.name')} isn't ready at the moment, please wait while I set things up`
+        body: bot.training.state ? bot.greet(`${user.id}`) : `${chatBotName} isn't ready at the moment, please wait while I set things up`
       })
     } catch (err) {
       next(new Error('Blocked illegal activity by ' + req.socket.remoteAddress))
@@ -204,11 +207,12 @@ export const status = function status () {
 }
 
 module.exports.process = function respond () {
+  const chatBotName = sanitizeHtml(config.get<string>('application.chatBot.name'));
   return async (req: Request, res: Response, next: NextFunction) => {
     if (bot == null) {
       res.status(200).json({
         action: 'response',
-        body: `${config.get<string>('application.chatBot.name')} isn't ready at the moment, please wait while I set things up`
+        body: `${chatBotName} isn't ready at the moment, please wait while I set things up`
       })
     }
     const token = req.cookies.token || utils.jwtFrom(req)
