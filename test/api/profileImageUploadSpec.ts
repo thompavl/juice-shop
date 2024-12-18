@@ -12,20 +12,22 @@ const jsonHeader = { 'content-type': 'application/json' }
 const REST_URL = 'http://localhost:3000/rest'
 const URL = 'http://localhost:3000'
 
+function loginJim() {
+  return frisby.post(REST_URL + '/user/login', {
+    headers: { 'Content-Type': 'application/json' },
+    body: {
+      email: 'jim@' + config.get<string>('application.domain'),
+      password: 'ncc-1701'
+    }
+  }).expect('status', 200)
+}
+
 describe('/profile/image/file', () => {
   it('POST profile image file valid for JPG format', () => {
     const file = path.resolve(__dirname, '../files/validProfileImage.jpg')
     const form = frisby.formData()
     form.append('file', fs.createReadStream(file))
-
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return loginJim()
       .then(({ json: jsonLogin }) => {
         return frisby.post(`${URL}/profile/image/file`, {
           headers: {
@@ -44,15 +46,7 @@ describe('/profile/image/file', () => {
     const file = path.resolve(__dirname, '../files/invalidProfileImageType.docx')
     const form = frisby.formData()
     form.append('file', fs.createReadStream(file))
-
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return loginJim()
       .then(({ json: jsonLogin }) => {
         return frisby.post(`${URL}/profile/image/file`, {
           headers: {
@@ -89,15 +83,7 @@ describe('/profile/image/url', () => {
   it('POST profile image URL valid for image available online', () => {
     const form = frisby.formData()
     form.append('imageUrl', 'https://placekitten.com/g/100/100')
-
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return loginJim()
       .then(({ json: jsonLogin }) => {
         return frisby.post(`${URL}/profile/image/url`, {
           headers: {
@@ -115,15 +101,7 @@ describe('/profile/image/url', () => {
   it('POST profile image URL redirects even for invalid image URL', () => {
     const form = frisby.formData()
     form.append('imageUrl', 'https://notanimage.here/100/100')
-
-    return frisby.post(`${REST_URL}/user/login`, {
-      headers: jsonHeader,
-      body: {
-        email: `jim@${config.get<string>('application.domain')}`,
-        password: 'ncc-1701'
-      }
-    })
-      .expect('status', 200)
+    return loginJim()
       .then(({ json: jsonLogin }) => {
         return frisby.post(`${URL}/profile/image/url`, {
           headers: {

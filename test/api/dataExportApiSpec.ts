@@ -40,6 +40,18 @@ const loginAmy = () => {
   }).expect('status', 200)
 }
 
+function postDataExport(token: string) {
+  return frisby.post(REST_URL + '/user/data-export', {
+    headers: { Authorization: 'Bearer ' + token, 'content-type': 'application/json' },
+    body: {
+      format: '1'
+    }
+  })
+    .expect('status', 200)
+    .expect('header', 'content-type', /application\/json/)
+    .expect('json', 'confirmation', 'Your data export will open in a new Browser window.')
+}
+
 const exportDataWithCaptcha = (token: string, format: number) => {
   return frisby.get(`${REST_URL}/image-captcha`, {
     headers: { Authorization: `Bearer ${token}`, 'content-type': 'application/json' }
@@ -64,15 +76,7 @@ describe('/rest/user/data-export', () => {
   it('Export data without use of CAPTCHA', () => {
     return login('bjoern.kimminich@gmail.com', 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI=')
       .then(({ json: jsonLogin }) => {
-        return frisby.post(REST_URL + '/user/data-export', {
-          headers: { Authorization: 'Bearer ' + jsonLogin.authentication.token, 'content-type': 'application/json' },
-          body: {
-            format: '1'
-          }
-        })
-          .expect('status', 200)
-          .expect('header', 'content-type', /application\/json/)
-          .expect('json', 'confirmation', 'Your data export will open in a new Browser window.')
+        return postDataExport(jsonLogin.json.authentication.token)
           .then(({ json }) => {
             const parsedData = JSON.parse(json.userData)
             expect(parsedData.username).toBe('bkimminich')
@@ -149,15 +153,7 @@ describe('/rest/user/data-export', () => {
   it('Export data including reviews without use of CAPTCHA', () => {
     return loginJim()
       .then(({ json: jsonLogin }) => {
-        return frisby.post(REST_URL + '/user/data-export', {
-          headers: { Authorization: 'Bearer ' + jsonLogin.authentication.token, 'content-type': 'application/json' },
-          body: {
-            format: '1'
-          }
-        })
-          .expect('status', 200)
-          .expect('header', 'content-type', /application\/json/)
-          .expect('json', 'confirmation', 'Your data export will open in a new Browser window.')
+        return postDataExport(jsonLogin.authentication.token)
           .then(({ json }) => {
             const parsedData = JSON.parse(json.userData)
             expect(parsedData.username).toBe('')
