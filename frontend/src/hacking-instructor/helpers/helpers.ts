@@ -49,7 +49,9 @@ export function waitForInputToHaveValue(
         if (replacementValue[property] === undefined) {
           throw new Error("Attack aborted");
         }
-        replacementValue = replacementValue[property];
+        if (property in replacementValue && replacementValue.hasOwnProperty(property)) {
+          replacementValue = replacementValue[property];
+        }
       }
       value = value.replace(options.replacement[0], replacementValue);
     }
