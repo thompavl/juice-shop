@@ -23,14 +23,14 @@ module.exports.orderHistory = function orderHistory () {
 }
 
 module.exports.allOrders = function allOrders () {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     const order = await ordersCollection.find()
     res.status(200).json({ status: 'success', data: order.reverse() })
   }
 }
 
 module.exports.toggleDeliveryStatus = function toggleDeliveryStatus () {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     const deliveryStatus = !req.body.deliveryStatus
     const eta = deliveryStatus ? '0' : '1'
     await ordersCollection.update({ _id: req.params.id }, { $set: { delivered: deliveryStatus, eta } })

@@ -10,7 +10,7 @@ import { reviewsCollection } from '../data/mongodb'
 import * as utils from '../lib/utils'
 import { challenges } from '../data/datacache'
 
-const security = require('../lib/insecurity')
+import security = require('../lib/insecurity')
 
 module.exports = function productReviews () {
   return (req: Request, res: Response) => {

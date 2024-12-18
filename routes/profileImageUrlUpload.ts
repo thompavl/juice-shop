@@ -9,8 +9,8 @@ import logger from '../lib/logger'
 
 import { UserModel } from '../models/user'
 import * as utils from '../lib/utils'
-const security = require('../lib/insecurity')
-const request = require('request')
+import security = require('../lib/insecurity')
+import request = require('request')
 
 module.exports = function profileImageUrlUpload () {
   return (req: Request, res: Response, next: NextFunction) => {
