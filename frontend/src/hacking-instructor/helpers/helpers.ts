@@ -33,8 +33,12 @@ export function waitForInputToHaveValue(
       if (!config) {
         const res = await fetch("/rest/admin/application-configuration");
         const json = await res.json();
+        // We must return only the allowed Fields and not the
+        // whole config object ! Find the allowed values?
         if (json && json.config) {
-          config = json.config;
+          config = {
+            allowedFields: json.config.allowedFields,
+          };
         } else {
           throw new Error("Attack aborted");
         }
