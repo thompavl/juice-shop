@@ -10,9 +10,9 @@ import chai = require('chai')
 import sinonChai = require('sinon-chai')
 const expect = chai.expect
 chai.use(sinonChai)
-const cache = require('../../data/datacache')
+import cache = require('../../data/datacache')
 const security = require('../../lib/insecurity')
-const utils = require('../../lib/utils')
+import utils = require('../../lib/utils')
 
 describe('verify', () => {
   const verify = require('../../routes/verify')

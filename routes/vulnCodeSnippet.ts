@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { type NextFunction, type Request, type Response } from 'express'
+import {type Request, type Response } from 'express'
 import fs from 'fs'
 import yaml from 'js-yaml'
 import { getCodeChallenges } from '../lib/codingChallenges'
@@ -21,7 +21,7 @@ interface VerdictRequestBody {
   key: string
 }
 
-const setStatusCode = (error: any) => {
+const setStatusCode = (error: Error) => {
   switch (error.name) {
     case 'BrokenBoundary':
       return 422
@@ -47,7 +47,7 @@ exports.serveCodeSnippet = () => async (req: Request<SnippetRequestBody, Record<
     }
     res.status(200).json({ snippet: snippetData.snippet })
   } catch (error) {
-    const statusCode = setStatusCode(error)
+    const statusCode = setStatusCode(error as Error)
     res.status(statusCode).json({ status: 'error', error: utils.getErrorMessage(error) })
   }
 }
@@ -81,7 +81,7 @@ exports.checkVulnLines = () => async (req: Request<Record<string, unknown>, Reco
       return
     }
   } catch (error) {
-    const statusCode = setStatusCode(error)
+    const statusCode = setStatusCode(error as Error)
     res.status(statusCode).json({ status: 'error', error: utils.getErrorMessage(error) })
     return
   }
